@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">DS4 LED Control</string>
+    <string name="macro_accessibility_description">Permite que as macros do DS4 LED Control detectem o botão de gatilho mesmo com outro app ou jogo aberto. Este serviço apenas observa os botões do controle — ele não lê nem controla nada de outros aplicativos.</string>
+</resources>

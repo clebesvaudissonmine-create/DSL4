@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+        PERMISSÕES BLUETOOTH (Android 12 / API 31+)
+        BLUETOOTH_SCAN  -> necessária para procurar dispositivos (descoberta)
+        BLUETOOTH_CONNECT -> necessária para conectar/parear e trocar dados com um dispositivo já vinculado
+        Essas substituem as antigas BLUETOOTH / BLUETOOTH_ADMIN para apps com targetSdk >= 31.
+        "neverForLocation" é usado pois o app NÃO utiliza o Bluetooth para inferir localização.
+    -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="31" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!-- Necessárias apenas em versões antigas (mantidas por compatibilidade de biblioteca, maxSdkVersion=30) -->
+    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30" />
+
+    <!-- Usado apenas pelo caminho alternativo via cabo USB-OTG (ver USB_LIMITATION no README) -->
+    <uses-permission android:name="android.hardware.usb.host" />
+    <uses-feature android:name="android.hardware.usb.host" android:required="false" />
+
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.DS4LedController">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.DS4LedController">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Permite que o Android abra o app automaticamente quando o DS4 é ligado via cabo USB-OTG -->
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/usb_device_filter" />
+        </activity>
+
+        <!-- Servico OPCIONAL: deteccao de macro em segundo plano (ver Ds4MacroAccessibilityService.kt) -->
+        <service
+            android:name=".macro.Ds4MacroAccessibilityService"
+            android:exported="false"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/macro_accessibility_service" />
+        </service>
+    </application>
+</manifest>

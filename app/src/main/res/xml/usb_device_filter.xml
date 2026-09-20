@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Filtro de dispositivo USB para o DualShock 4.
+    Vendor ID da Sony: 0x054C (1356)
+    Product IDs conhecidos do DS4 (IDs publicos, registrados junto ao USB-IF):
+      0x05C4 (1476)  -> DualShock 4 revisao 1 (CUH-ZCT1x)
+      0x09CC (2508)  -> DualShock 4 revisao 2 (CUH-ZCT2x)
+-->
+<resources>
+    <usb-device vendor-id="1356" product-id="1476" />
+    <usb-device vendor-id="1356" product-id="2508" />
+</resources>

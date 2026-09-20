@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Configuracao do servico de acessibilidade opcional usado para detectar o
+    botao de gatilho da macro mesmo com outro app/jogo em primeiro plano.
+    canRequestFilterKeyEvents + flagRequestFilterKeyEvents: permite RECEBER
+    (nao injetar) eventos de tecla de hardware do sistema inteiro, incluindo
+    os do DS4 conectado por Bluetooth. Nao pedimos canPerformGestures nem
+    nenhuma outra capacidade, porque este servico so observa, nunca injeta
+    nada em outros apps (ver Ds4MacroAccessibilityService.kt).
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeAllMask"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:canRequestFilterKeyEvents="true"
+    android:description="@string/macro_accessibility_description"
+    android:notificationTimeout="100" />
