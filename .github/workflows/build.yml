@@ -1,0 +1,64 @@
+name: Compilar APK
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Descompactar zip do projeto
+        run: |
+          ZIP_FILE=""
+          if [ -f project-source.zip ]; then
+            ZIP_FILE="project-source.zip"
+          elif [ -f DSL4.zip ]; then
+            ZIP_FILE="DSL4.zip"
+          elif [ -f projeto.zip ]; then
+            ZIP_FILE="projeto.zip"
+          fi
+          if [ -n "$ZIP_FILE" ]; then
+            echo "Encontrado $ZIP_FILE, descompactando..."
+            unzip -o "$ZIP_FILE"
+            rm -f "$ZIP_FILE"
+            git config user.name "github-actions"
+            git config user.email "actions@users.noreply.github.com"
+            git add -A
+            git commit -m "Descompacta o projeto" || echo "Nada novo para commitar"
+            git push
+          else
+            echo "Nenhum zip encontrado — assumindo que o projeto ja esta descompactado no repositorio."
+          fi
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Verificar arquivos do projeto (diagnostico)
+        run: |
+          echo "Conteudo da raiz do repositorio:"
+          ls -la
+          echo "---"
+          echo "Existe settings.gradle.kts? "
+          test -f settings.gradle.kts && echo "sim" || echo "NAO ENCONTRADO"
+
+      - run: gradle assembleDebug --stacktrace
+
+      - name: Publicar APK
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk DS4LedController.apk
+          gh release create "apk-${{ github.run_number }}" DS4LedController.apk \
+            --title "DS4 LED Control #${{ github.run_number }}" --notes "APK de teste"
